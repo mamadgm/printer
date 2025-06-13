@@ -1,18 +1,46 @@
-BrowserPrint.getDefaultDevice("printer", function(printer) {
-  if (!printer) {
-    alert("No printer found!");
-    return;
-  }
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Zebra Print Test</title>
+    <script src="zebra-browser-print-js-v31250/BrowserPrint-3.1.250.min.js"></script>
+  </head>
+  <body>
+    <h1>Zebra Print Test</h1>
+    <button onclick="printHelloWorld()">Print HELLO WORLD</button>
 
-  const zpl = `
+    <script>
+      function printHelloWorld() {
+        BrowserPrint.getDefaultDevice(
+          "printer",
+          function (printer) {
+            if (!printer) {
+              alert("No printer found!");
+              return;
+            }
+
+            // ZPL to print "HELLO WORLD" on both left and right labels
+            const zpl = `
 ^XA
 ^CF0,30
-^FO20,20^FDHELLO WORLD^FS
-^FO20,80^FDHELLO WORLD^FS
+^FO20,20^FDHELLO WORLD^FS     ; Left label
+^FO300,20^FDHELLO WORLD^FS    ; Right label
 ^XZ
-  `;
+        `;
 
-  printer.send(zpl, undefined, function(error) {
-    alert("Error printing: " + error);
-  });
-});
+            printer.send(zpl, undefined, function (error) {
+              if (error) {
+                alert("Error printing: " + error);
+              } else {
+                alert("Print job sent!");
+              }
+            });
+          },
+          function (error) {
+            alert("Failed to get printer: " + error);
+          }
+        );
+      }
+    </script>
+  </body>
+</html>
